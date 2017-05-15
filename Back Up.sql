@@ -1,0 +1,3 @@
+BACKUP DATABASE s17guest11
+TO DISK = 'C:\s17guest11.BAK'
+GO
