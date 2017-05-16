@@ -49,6 +49,27 @@ create table Role (
 	PRIMARY KEY(RoleID)
 )
 
+create table Sponsor (
+	CompanyName nvarchar(150) NOT NULL,
+	SponsorID int NOT NULL,
+	CONSTRAINT fk_Sponsor_SponsorID FOREIGN KEY(SponsorID) REFERENCES SponsorLevel (SponsorID)
+)
+
+create table SponsorLevel (
+	SponsorID int Identity UNIQUE NOT NULL,
+	SponsorLevel nvarchar(50),
+	PRIMARY KEY(SponsorID)
+)
+
+create table Raffle (
+	RaffleID int Identity UNIQUE NOT NULL,
+	SQLID int NOT NULL,
+	UserID int NOT NULL,
+	PRIMARY KEY(RaffleID),
+	CONSTRAINT fk_Raffle_SQLID FOREIGN KEY(SQLID) REFERENCES SQLSaturday (SQLID),
+	CONSTRAINT fk_Raffle_UserID FOREIGN KEY(UserID) REFERENCES Person (UserID)
+)
+
 create table dbo.Track(
 	TrackID int NOT NULL Identity UNIQUE,
 	Category nvarchar(50),

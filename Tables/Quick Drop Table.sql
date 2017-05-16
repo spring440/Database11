@@ -13,6 +13,9 @@ drop table Person
 drop table Room 
 drop table SQLSaturday
 drop table Address
+drop table Raffle
+drop table SponsorLevel
+drop table Sponsor
 
 
 DROP PROCEDURE dbo.newAddress

@@ -1,3 +1,4 @@
+/*Creates a new address that is not a duplicate*/
 GO
 CREATE PROCEDURE dbo.newAddress( @Street nvarchar(50), @City nvarchar(50), @ZipCode nvarchar(50), @State nvarchar(50) )
 AS BEGIN
@@ -7,6 +8,7 @@ AS BEGIN
 	END
 END
 
+/*Creates a new room from given address if address exists*/
 GO
 CREATE PROCEDURE dbo.addRoom( @Street nvarchar(50), @City nvarchar(50), @ZipCode nvarchar(50), @State nvarchar(50), @Capacity int)
 AS BEGIN
@@ -14,6 +16,7 @@ AS BEGIN
 		VALUES ((SELECT AddressID FROM Address WHERE State=@state AND City=@city AND Street=@Street AND ZipCode=@ZipCode), @Capacity)
 END
 
+/*Uses given room# to create a new Vendor Table*/
 GO
 CREATE PROCEDURE dbo.addVendorTable( @Room# int, @UserID int)
 AS BEGIN
@@ -23,12 +26,15 @@ AS BEGIN
 	END
 END
 
+/*Adds a new track*/
 GO
 CREATE PROCEDURE dbo.addTrack (@Category nvarchar(50))
 AS BEGIN
 	INSERT INTO Track (Category) VALUES (@Category)
 END
 
+/*Adds a new SQL Saturday event*/
+/*Creates a new address if it doesnt exist*/
 GO
 CREATE PROCEDURE dbo.newSQLSaturday( @DateTime DATE, @Street nvarchar(50), @City nvarchar(50), @ZipCode nvarchar(50), @State nvarchar(50), @SQLSaturdayTitle nvarchar(50))
 AS BEGIN
@@ -38,12 +44,14 @@ AS BEGIN
 		EXEC newAddress @Street, @City, @ZipCode, @State
 	END
 	Set @AddressID = (SELECT AddressID FROM Address WHERE State=@state AND City=@city AND Street=@Street AND ZipCode=@ZipCode)
-	IF NOT EXISTS(SELECT * FROM SQLSaturday WHERE DateTime=@DateTime)
+	IF NOT EXISTS(SELECT * FROM SQLSaturday WHERE DateTime=@DateTime AND Address=@AddressID)
 	BEGIN
 		INSERT INTO SQLSaturday (DateTime,AddressID,SQLSaturdayTitle) VALUES (@DateTime, @AddressID, @SQLSaturdayTitle)
 	END
 END
 
+/*Adds a new person on the register*/
+/*Creates a new address if it doesnt exist*/
 GO
 CREATE PROCEDURE dbo.newPerson(@FirstName nvarchar(50), @LastName nvarchar(50), @Street nvarchar(50), @City nvarchar(50), @ZipCode nvarchar(50), @State nvarchar(50), @Email nvarchar(50) )
 AS BEGIN
@@ -59,6 +67,8 @@ AS BEGIN
 	END
 END
 
+/*Gives the role organizer to a user if they dont already have it*/
+/*Having another role already does not prevent this procedure as user can have multiple roles*/
 GO
 CREATE PROCEDURE dbo.newOrganizer( @FirstName nvarchar(50), @LastName nvarchar(50), @Title nvarchar(50))
 AS BEGIN
@@ -72,6 +82,8 @@ AS BEGIN
 	END
 END
 
+/*Gives the role student to a user if they dont already have it*/
+/*Having another role already does not prevent this procedure as user can have multiple roles*/
 GO
 CREATE PROCEDURE dbo.newStudent( @FirstName nvarchar(50), @LastName nvarchar(50), @Title nvarchar(50))
 AS BEGIN
@@ -85,6 +97,8 @@ AS BEGIN
 	END
 END
 
+/*Gives the role vendor to a user if they dont already have it*/
+/*Having another role already does not prevent this procedure as user can have multiple roles*/
 GO
 CREATE PROCEDURE dbo.newVendor( @FirstName nvarchar(50), @LastName nvarchar(50), @Title nvarchar(50))
 AS BEGIN
@@ -98,6 +112,8 @@ AS BEGIN
 	END
 END
 
+/*Gives the role presenter to a user if they dont already have it*/
+/*Having another role already does not prevent this procedure as user can have multiple roles*/
 GO
 CREATE PROCEDURE dbo.newPresenter( @FirstName nvarchar(50), @LastName nvarchar(50), @Title nvarchar(50))
 AS BEGIN
@@ -111,6 +127,8 @@ AS BEGIN
 	END
 END
 
+/*Gives the role volunteer to a user if they dont already have it*/
+/*Having another role already does not prevent this procedure as user can have multiple roles*/
 GO
 CREATE PROCEDURE dbo.newVolunteer( @FirstName nvarchar(50), @LastName nvarchar(50), @Title nvarchar(50))
 AS BEGIN
@@ -124,8 +142,8 @@ AS BEGIN
 	END
 END
 
-
-
+/*Changes the status on the lecture to approved.*/
+/*Lecture must have been already assigned to existing event*/
 GO
 CREATE PROCEDURE dbo.approveLecture( @LectureTitle nvarchar(50), @SQLTitle nvarchar(50))
 AS BEGIN
@@ -136,6 +154,8 @@ AS BEGIN
 	Update Lecture SET Approval = 1 WHERE LectureID = @LectureID AND SQLID=@SQLID
 END
 
+/*Changes the status on the lecture to given track.*/
+/*Lecture must have been already assigned to existing event*/
 GO
 CREATE PROCEDURE dbo.SetTrackLecture( @LectureTitle nvarchar(50), @SQLTitle nvarchar(50), @TrackTopic nvarchar(50))
 AS BEGIN
@@ -148,6 +168,8 @@ AS BEGIN
 	Update Lecture SET TrackID = @TrackID WHERE LectureID = @LectureID AND SQLID=@SQLID
 END
 
+/*Assigns the lecture to an event*/
+/*This procedure must be called first to allow for many lecture procedures*/
 GO
 CREATE PROCEDURE dbo.SetLectureToEvent( @LectureTitle nvarchar(50), @SQLTitle nvarchar(50))
 AS BEGIN
@@ -158,6 +180,8 @@ AS BEGIN
 	Update Lecture SET SQLID = @SQLID WHERE LectureID = @LectureID AND SQLID IS NULL
 END
 
+/*Gives start and finish time for lecture*/
+/*Lecture must have been already assigned to existing event*/
 GO
 CREATE PROCEDURE dbo.addLectureTime( @LectureTitle nvarchar(50), @SQLTitle nvarchar(50), @StartTime time, @EndTime time)
 AS BEGIN
@@ -168,6 +192,8 @@ AS BEGIN
 	Update Lecture SET StartTime=@StartTime,EndTime=@EndTime WHERE LectureID = @LectureID AND SQLID=@SQLID
 END
 
+/*Assigns lecture to a room*/
+/*Lecture must have been already assigned to existing event*/
 GO
 CREATE PROCEDURE dbo.addLectureRoom( @LectureTitle nvarchar(50), @SQLTitle nvarchar(50), @Room# int)
 AS BEGIN
@@ -178,6 +204,8 @@ AS BEGIN
 	Update Lecture SET Room#=@Room# WHERE LectureID = @LectureID AND SQLID=@SQLID
 END
 
+/*Adds description to the lecture*/
+/*Lecture must have been already assigned to existing event*/
 GO
 CREATE PROCEDURE dbo.addLectureDescription( @LectureTitle nvarchar(50), @SQLTitle nvarchar(50), @Description nvarchar(50))
 AS BEGIN
@@ -188,6 +216,8 @@ AS BEGIN
 	Update Lecture SET Description=@Description WHERE LectureID = @LectureID AND SQLID=@SQLID
 END
 
+/*Creates a schedule for a user whose role is student*/
+/*Cannot create a schedule that makes time conflict*/
 GO
 CREATE PROCEDURE dbo.addSchedule(@LectureTitle nvarchar(50), @Name nvarchar(50))
 AS BEGIN
@@ -208,6 +238,7 @@ AS BEGIN
 	END
 END
 
+/*Adds grades to the lecture*/
 GO
 CREATE PROCEDURE dbo.addGrade(@LectureTitle nvarchar(50), @GradeID int)
 AS BEGIN
@@ -216,6 +247,7 @@ AS BEGIN
 	INSERT INTO LectureGrade (LectureID,GradeID) VALUES (@LectureID, @GradeID)	
 END
 
+/*For given track, finds all lecture with that track*/
 GO
 CREATE PROCEDURE dbo.LectureInTrack(@TrackTopic nvarchar(50))
 AS 
@@ -224,23 +256,24 @@ AS
 	SELECT * FROM Lecture WHERE TrackID=@TrackID
 GO
 
-
+/*Finds all student emails*/
 GO
 CREATE PROCEDURE dbo.getStudentEmail(@Location nvarchar(50))
 AS 
 	SELECT FirstName, LastName, Email FROM Person WHERE UserID IN (SELECT UserID FROM LinkerUserToRole WHERE RoleID=1)
 GO
 
+/*Following procedures finds all user with the according roles*/
 GO
 CREATE PROCEDURE dbo.getAllStudent(@Location nvarchar(50))
 AS 
-	SELECT FirstName, LastName, Email FROM Person WHERE UserID IN (SELECT UserID FROM LinkerUserToRole WHERE RoleID=1)
+	SELECT FirstName, LastName, Email FROM Person WHERE UserID IN (SELECT UserID FROM LinkerUserToRole WHERE RoleID=2)
 GO
 
 GO
 CREATE PROCEDURE dbo.getAllOrganizer(@Location nvarchar(50))
 AS 
-	SELECT FirstName, LastName, Email FROM Person WHERE UserID IN (SELECT UserID FROM LinkerUserToRole WHERE RoleID=2)
+	SELECT FirstName, LastName, Email FROM Person WHERE UserID IN (SELECT UserID FROM LinkerUserToRole WHERE RoleID=1)
 GO
 
 GO

@@ -1,3 +1,4 @@
+/*LectureInEvent returns all lecture within the given event location*/
 GO
 CREATE PROCEDURE dbo.LectureInEvent(@Location nvarchar(50))
 AS 
@@ -6,14 +7,15 @@ AS
 	SELECT * FROM Lecture WHERE SQLID=@SQLID
 GO
 
-
+/*Uses LectureInEvent procedure with event location value set to Budapest*/
 GO
 CREATE PROCEDURE dbo.LectureInBudapest
 AS 
 	EXEC LectureInEvent 'Budapest'
 GO
 
-
+/*Inserts a new presentation or lecture with the speaker and title. Speaker name must be formatted 'firstname lastname' and seperated by a space*/
+/*Usage of setLectureToEvent recommended after creating lecture*/
 GO
 CREATE PROCEDURE dbo.insertPresentation( 
 	@Name nvarchar(50),

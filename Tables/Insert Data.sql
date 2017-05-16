@@ -8,6 +8,12 @@ INSERT INTO Difficulty(DifficultyLevel) Values ('Easy')
 INSERT INTO Difficulty(DifficultyLevel) Values ('Medium')
 INSERT INTO Difficulty(DifficultyLevel) Values ('Hard')
 
+INSERT INTO SponsorLevel(SponsorLevel) Values ('Bronze Sponsor')
+INSERT INTO SponsorLevel(SponsorLevel) Values ('Silver Sponsor')
+INSERT INTO SponsorLevel(SponsorLevel) Values ('Gold Sponsor')
+INSERT INTO SponsorLevel(SponsorLevel) Values ('Platinum Sponsor')
+INSERT INTO SponsorLevel(SponsorLevel) Values ('VIP Sponsor')
+
 INSERT INTO Grade(Grade) VALUES ('A')
 INSERT INTO Grade(Grade) VALUES ('B')
 INSERT INTO Grade(Grade) VALUES ('C')
@@ -283,6 +289,16 @@ INSERT INTO LinkerUserToRole (RoleID,UserID,SQLID) VALUES (1,11,1),
 	(5,54,1),
 	(5,55,1),
 	(3,33,3)
+
+INSERT INTO Sponsor (Company,SponsorID) VALUES ('Hush Hush',1),
+	('COZYROC',1)
+	('SQLDocKit by Acceleratio Ltd.',1)
+
+INSERT INTO Raffle (SQLID, UserID) VALUES (1,11),
+	(1,12),
+	(1,13),
+	(1,14),
+	(1,15)
 
 INSERT INTO Lecture (SQLID,Title,StartTime,EndTime,Description,DifficultyID,TrackID,Room#) VALUES 
 	(1,'3NF','3:00','4:00','Lecture about normalization',2,1,2),
